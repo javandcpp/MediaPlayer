@@ -1,10 +1,9 @@
 package com.example.huaweichang.xmediaplayer;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -12,8 +11,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
     // Example of a call to a native method
-    TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());
+//    TextView tv = (TextView) findViewById(R.id.sample_text);
+//    tv.setText(stringFromJNI());
     }
 
     /**
@@ -21,6 +20,7 @@ public class MainActivity extends Activity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
