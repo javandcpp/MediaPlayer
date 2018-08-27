@@ -2,6 +2,8 @@ package com.example.huaweichang.xmediaplayer;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -10,20 +12,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-    // Example of a call to a native method
-//    TextView tv = (TextView) findViewById(R.id.sample_text);
-//    tv.setText(stringFromJNI());
+    }
+
+
+    public void openVideo(View view){
+        openVideo("/sdcard/1080.mp4");
+    }
+
+    public native void openVideo(String s);
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+
 
 
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("Media");
     }
 }

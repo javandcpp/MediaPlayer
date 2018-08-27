@@ -11,16 +11,52 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 
+set(include-ffmpegheaders ${CMAKE_SOURCE_DIR}/src/main/cpp/ffmpeg)
+include_directories(${include-ffmpegheaders})
+
+
+
+add_library(avcodec SHARED IMPORTED)
+set_target_properties(avcodec
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavcodec.so)
+
+add_library(avfilter SHARED IMPORTED)
+set_target_properties(avfilter
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavfilter.so)
+
+add_library(avformat SHARED IMPORTED)
+set_target_properties(avformat
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavformat.so)
+
+add_library(avutil SHARED IMPORTED)
+set_target_properties(avutil
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavutil.so)
+
+add_library(swresample SHARED IMPORTED)
+set_target_properties(swresample
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswresample.so)
+
+add_library(swscale SHARED IMPORTED)
+set_target_properties(swscale
+                      PROPERTIES
+                      IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswscale.so)
+
+file(GLOB native_srcs "src/main/cpp/*.cpp")
+
 
 add_library( # Sets the name of the library.
-             native-lib
+             Media
 
              # Sets the library as a shared library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/jnibridge.cpp
-             src/main/cpp/MyEGL.cpp)
+             ${native_srcs})
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -40,9 +76,16 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       Media
                        EGL
                        GLESv2
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} android)
+                      ${log-lib}
+                       android
+                       avcodec
+                       avformat
+                       avutil
+                       swscale
+                       swresample
+                       avfilter)
