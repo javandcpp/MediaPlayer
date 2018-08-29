@@ -6,6 +6,7 @@
 #include "MLOG.h"
 #include <android/native_window_jni.h>
 
+
 FFmpegDemux *fFmpegDemux = NULL;
 
 
@@ -13,6 +14,12 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_huaweichang_xmediaplayer_VideoView_initNativeEGL(JNIEnv *env, jobject instance,
                                                                   jobject surface) {
+
+
+
+
+
+
 
 
 }
@@ -36,4 +43,12 @@ Java_com_example_huaweichang_xmediaplayer_MainActivity_openVideo__Ljava_lang_Str
 
 
     env->ReleaseStringUTFChars(s_, s);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_VideoView_release(JNIEnv *env, jobject instance) {
+
+
+
 }

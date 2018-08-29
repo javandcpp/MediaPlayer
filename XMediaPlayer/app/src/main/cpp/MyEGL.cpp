@@ -5,6 +5,8 @@
 #include "MyEGL.h"
 #include "MLOG.h"
 
+
+
 bool MyEGL::eglInit(jobject surface) {
 
     if((eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY))==EGL_NO_DISPLAY){

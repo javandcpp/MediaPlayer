@@ -25,4 +25,6 @@ public class VideoView extends GLSurfaceView implements SurfaceHolder.Callback {
     }
 
     public native void initNativeEGL(Surface surface);
+
+    public native void release();
 }
