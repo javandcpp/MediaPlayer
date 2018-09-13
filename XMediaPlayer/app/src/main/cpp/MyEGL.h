@@ -20,6 +20,13 @@ public:
     EGLConfig  *eglConfig=NULL;
     EGLSurface  eglSurface=EGL_NO_SURFACE;
     EGLContext eglContext=EGL_NO_CONTEXT;
+    void drawGraphic();
+    static MyEGL *Get();
+    virtual ~MyEGL();
+
+protected:
+    MyEGL();
+
 
 };
 

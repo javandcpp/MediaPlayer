@@ -14,6 +14,17 @@
  * @return
  */
 
+void MyEGL::drawGraphic() {
+    if(eglDisplay!=EGL_NO_DISPLAY&&eglSurface!=EGL_NO_SURFACE){
+        eglSwapBuffers(eglDisplay,eglSurface);
+    }
+}
+
+MyEGL *MyEGL::Get() {
+    static MyEGL egl;
+    return &egl;
+}
+
 bool MyEGL::eglInit(void *win) {
     ANativeWindow *nativeWindow = (ANativeWindow *) win;
     //获取渲染目标对象(封装物理屏幕的数据类型)
@@ -94,6 +105,14 @@ bool MyEGL::eglInit(void *win) {
     //资源销毁  1.销毁显示设备 eglDestroySurface(display,eglsurface);  2.销毁上下文eglDestroyContext(display,context);
 
     return true;
+}
+
+MyEGL::MyEGL() {
+
+}
+
+MyEGL::~MyEGL() {
+
 }
 /**
 EGLBoolean EGL_TRUE =1, EGL_FALSE=0
