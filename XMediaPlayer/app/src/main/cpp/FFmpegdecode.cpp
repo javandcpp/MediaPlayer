@@ -32,6 +32,8 @@ bool FFmpegdecode::openCodec(AVParameters parameters) {
         return false;
     }
     codecContext = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(codecContext,parameters.codecParameters);
+    codecContext->thread_count=8;
     int ret = avcodec_open2(codecContext, NULL, NULL);
     if (ret < 0) {
         LOGE("avcodec open error :%s", av_err2str(ret));
@@ -49,11 +51,6 @@ bool FFmpegdecode::openCodec(AVParameters parameters) {
 }
 
 bool FFmpegdecode::sendPacket(AVData pkt) {
-    if (pkt.size <= 0 || !pkt.data)return false;
-
-    if (!codecContext) {
-        return false;
-    }
     int re = avcodec_send_packet(codecContext, (const AVPacket *) pkt.data);
     if (re != 0) {
         LOGE("ffmpeg sendPacket failed :%s",av_err2str(re));
