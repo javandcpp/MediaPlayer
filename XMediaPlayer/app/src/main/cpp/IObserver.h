@@ -21,6 +21,7 @@ public:
 protected:
     std::vector<IObserver*> observerlist;
     std::mutex mtx;
+
 };
 
 

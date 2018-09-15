@@ -10,6 +10,7 @@
 #ifdef __cplusplus
 extern "C" {
 #include <libavformat/avformat.h>
+}
 #endif
 
 
@@ -53,7 +54,5 @@ protected:
 
 };
 
-#ifdef __cplusplus
-}
-#endif
+
 #endif //XMEDIAPLAYER_FFMPEGDEMUX_H

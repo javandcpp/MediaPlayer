@@ -9,6 +9,8 @@
 #include <mutex>
 #include <condition_variable>
 
+using namespace std;
+
 template<typename T>
 class threadsafe_queue {
 private:
@@ -54,6 +56,12 @@ public:
         value = data_queue.front();
         data_queue.pop();
         return true;
+    }
+    int Size(){
+        if(data_queue.empty()){
+            return 0;
+        }
+        return data_queue.size();
     }
 
     std::shared_ptr<T> try_pop() {

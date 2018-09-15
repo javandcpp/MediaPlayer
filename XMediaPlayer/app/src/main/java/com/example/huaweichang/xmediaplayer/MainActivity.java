@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     public native void openVideo(String s);
 
 
+
     @Override
     protected void onResume() {
         super.onResume();

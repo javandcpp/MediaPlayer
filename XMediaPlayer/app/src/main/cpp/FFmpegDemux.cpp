@@ -9,6 +9,12 @@
 
 bool FFmpegDemux::isFirst = false;
 
+
+static double r2d(AVRational avRational) {
+    return avRational.num == 0 || avRational.den == 0 ? 0. : (double) avRational.num /
+                                                             (double) avRational.den;
+}
+
 FFmpegDemux::FFmpegDemux() {
     if (!isFirst) {
         initAVCodec();
@@ -32,7 +38,6 @@ bool FFmpegDemux::open(const char *url) {
     avFormatContext = avformat_alloc_context();
     if (!avFormatContext) {
         LOGE("Could not allocate context.\n");
-        goto fail;
     }
     avFormatContext->interrupt_callback.callback = custom_interrupt_callback;
     avFormatContext->interrupt_callback.opaque = this;
@@ -52,33 +57,58 @@ bool FFmpegDemux::open(const char *url) {
 
     LOGD("find stream index  videoStream:%d   audioStream:%d", getVideoStreamIndex(),
          getAudioStreamIndex());
+    return true;
 
     fail:
-
-
-    return true;
+    return false;
 }
 
 AVParameters *FFmpegDemux::getAudioParameters() {
     if (!avFormatContext || getAudioStreamIndex() < 0) NULL;
-    audioAvParameters=new AVParameters();
-    audioAvParameters->codecParameters=avcodec_parameters_alloc();
-    avcodec_parameters_copy(audioAvParameters->codecParameters,avFormatContext->streams[getAudioStreamIndex()]->codecpar);
+    audioAvParameters = new AVParameters();
+    audioAvParameters->codecParameters = avcodec_parameters_alloc();
+    avcodec_parameters_copy(audioAvParameters->codecParameters,
+                            avFormatContext->streams[getAudioStreamIndex()]->codecpar);
     return audioAvParameters;
 }
 
 AVParameters *FFmpegDemux::getVideoParamters() {
     if (!avFormatContext || getVideoStreamIndex() < 0)NULL;
-    videoAvParameters=new AVParameters();
-    videoAvParameters->codecParameters=avcodec_parameters_alloc();
-    avcodec_parameters_copy(videoAvParameters->codecParameters,avFormatContext->streams[getVideoStreamIndex()]->codecpar);
+    videoAvParameters = new AVParameters();
+    videoAvParameters->codecParameters = avcodec_parameters_alloc();
+    avcodec_parameters_copy(videoAvParameters->codecParameters,
+                            avFormatContext->streams[getVideoStreamIndex()]->codecpar);
     return videoAvParameters;
 }
 
 AVData FFmpegDemux::readMediaData() {
+    if (!avFormatContext)return AVData();
 
-    return AVData();
+    AVData avData;
+    AVPacket *pkt = av_packet_alloc();
+    int re = av_read_frame(avFormatContext, pkt);
+    if (re != 0) {
+        av_packet_free(&pkt);
+        return AVData();
+    }
+    avData.data = (unsigned char*)pkt;
+    avData.size = pkt->size;
+    if (pkt->stream_index == audioStreamIndex) {
+        avData.isAudio = true;
+    } else if (pkt->stream_index == videoStreamIndex) {
+        avData.isAudio = false;
+    } else {
+        av_packet_free(&pkt);
+        return AVData();
+    }
+
+    pkt->pts = pkt->pts * (1000 * r2d(avFormatContext->streams[pkt->stream_index]->time_base));
+    pkt->dts = pkt->dts * (1000 * r2d(avFormatContext->streams[pkt->stream_index]->time_base));
+    avData.pts = (int) pkt->pts;
+    LOGD("read media data size:%d", avData.size);
+    return avData;
 }
+
 
 void FFmpegDemux::initAVCodec() {
     av_register_all();

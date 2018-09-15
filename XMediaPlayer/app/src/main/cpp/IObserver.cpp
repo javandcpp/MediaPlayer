@@ -6,14 +6,17 @@
 using namespace std;
 
 void IObserver::addObserver(IObserver *observers) {
-    std::lock_guard<std::mutex> lock(mutex);
+    if(!observers)return;
+    mtx.lock();
     observerlist.push_back(observers);
-
+    mtx.unlock();
 }
 
 void IObserver::notifyObserver(AVData data) {
-    std::lock_guard<std::mutex> lock(mutex);
+
+    mtx.lock();
     for (int i = 0; i < observerlist.size(); ++i) {
-        observerlist[i]->notifyObserver(data);
+        observerlist[i]->update(data);
     }
+    mtx.unlock();
 }
