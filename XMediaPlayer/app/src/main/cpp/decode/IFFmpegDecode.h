@@ -6,9 +6,9 @@
 #define XMEDIAPLAYER_IFFMPEGDECODE_H
 
 
-#include "IObserver.h"
-#include "AVParameters.h"
-#include "threadsafe_queue.cpp"
+#include "../IObserver.h"
+#include "../AVParameters.h"
+#include "../threadsafe_queue.cpp"
 #include <mutex>
 #include <list>
 
@@ -25,6 +25,8 @@ public:
     //从线程中获取解码结果  再次调用会复用上次空间，线程不安全
     virtual AVData receiveFrame() = 0;
 
+    virtual AVData receiveCacheFrame()=0;
+
     virtual void update(AVData pkt);
 
     bool isAudio = false;
@@ -33,7 +35,7 @@ public:
     int maxList = 100;
 
     //同步时间，再次打开文件要清理
-    int synPts = 0;
+    int syncAudioPts = 0;
     int pts = 0;
 
 protected:

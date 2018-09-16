@@ -15,7 +15,6 @@ set(include-ffmpegheaders ${CMAKE_SOURCE_DIR}/src/main/cpp/ffmpeg)
 include_directories(${include-ffmpegheaders})
 
 
-
 add_library(avcodec SHARED IMPORTED)
 set_target_properties(avcodec
                       PROPERTIES
@@ -47,6 +46,13 @@ set_target_properties(swscale
                       IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswscale.so)
 
 file(GLOB native_srcs "src/main/cpp/*.cpp")
+file(GLOB native_audio_srcs "src/main/cpp/audio/*.cpp")
+file(GLOB native_video_srcs "src/main/cpp/video/*.cpp")
+file(GLOB native_decode_srcs "src/main/cpp/decode/*.cpp")
+file(GLOB native_demux_srcs "src/main/cpp/demux/*.cpp")
+file(GLOB native_log_srcs "src/main/cpp/log/*.cpp")
+file(GLOB native_Opengl_srcs "src/main/cpp/Opengl/*.cpp")
+file(GLOB native_player_srcs "src/main/cpp/player/*.cpp")
 
 
 add_library( # Sets the name of the library.
@@ -56,7 +62,16 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             ${native_srcs})
+             ${native_srcs}
+             ${native_audio_srcs}
+             ${native_video_srcs}
+             ${native_decode_srcs}
+             ${native_demux_srcs}
+             ${native_log_srcs}
+             ${native_Opengl_srcs}
+             ${native_player_srcs}
+
+             )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -79,6 +94,7 @@ target_link_libraries( # Specifies the target library.
                        Media
                        EGL
                        GLESv2
+                       OpenSLES
                        # Links the target library to the log library
                        # included in the NDK.
                       ${log-lib}

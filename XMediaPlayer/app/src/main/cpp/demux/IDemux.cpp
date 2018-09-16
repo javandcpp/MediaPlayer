@@ -3,7 +3,7 @@
 //
 
 #include "IDemux.h"
-#include "MLOG.h"
+#include "../log/MLOG.h"
 
 void IDemux::main() {
     while (!isExit){

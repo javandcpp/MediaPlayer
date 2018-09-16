@@ -1,24 +1,26 @@
 
 #include <string>
-#include "MyEGL.h"
-#include "FFmpegDemux.h"
+#include "Opengl/EGLContext.h"
+#include "demux/FFmpegDemux.h"
 #include <jni.h>
-#include "MLOG.h"
-#include "FFmpegdecode.h"
+#include "log/MLOG.h"
+#include "decode/FFmpegdecode.h"
+#include "video/OpenGLVideoView.h"
+#include "audio/IAudioPlay.h"
+#include "audio/IAudioResample.h"
+#include "audio/FFmpegAudioResample.h"
+#include "audio/OpenSLESAudioPlay.h"
+#include "player/MediaPlayer.h"
 #include <android/native_window_jni.h>
 
-
-FFmpegDemux *fFmpegDemux = NULL;
-
-FFmpegdecode *fFmpegAudioDecode = NULL;
-FFmpegdecode *fFmpegVideoDecode = NULL;
+ANativeWindow *window=NULL;
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_huaweichang_xmediaplayer_VideoView_initNativeEGL(JNIEnv *env, jobject instance,
                                                                   jobject surface) {
 
-
+    window = ANativeWindow_fromSurface(env,surface);
 }
 
 
@@ -29,33 +31,11 @@ Java_com_example_huaweichang_xmediaplayer_MainActivity_openVideo__Ljava_lang_Str
                                                                                       jstring s_) {
     const char *s = env->GetStringUTFChars(s_, 0);
 
-    fFmpegDemux = new FFmpegDemux();
-    fFmpegAudioDecode = new FFmpegdecode();
-    fFmpegVideoDecode = new FFmpegdecode();
-
-    fFmpegDemux->addObserver(fFmpegAudioDecode);
-    fFmpegDemux->addObserver(fFmpegVideoDecode);
-
-    bool openResult = fFmpegDemux->open(s);
-    if (!openResult) {
-        LOGE("ffmpeg demux failed!");
-    }
-    LOGD("ffmpeg demux success!");
-
-    const AVParameters *audioParameters = fFmpegDemux->getAudioParameters();
-    const AVParameters *videoParameters = fFmpegDemux->getVideoParamters();
-
-    LOGD("videoParameters codecID:%d", videoParameters->codecParameters->codec_id);
-    LOGD("audioParameters codecID:%d", audioParameters->codecParameters->codec_id);
-
-    fFmpegAudioDecode->openCodec(*audioParameters);
-    fFmpegVideoDecode->openCodec(*videoParameters);
-
-
-    fFmpegVideoDecode->startThread();
-    fFmpegAudioDecode->startThread();
-    fFmpegDemux->startThread();
-
+    MediaPlayer *mediaPlayer=new MediaPlayer();
+    mediaPlayer->initialize();
+    mediaPlayer->setNativeWindow(window);
+    mediaPlayer->setDataSource(s);
+    mediaPlayer->startPlay();
 
     env->ReleaseStringUTFChars(s_, s);
 }
@@ -64,17 +44,6 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_huaweichang_xmediaplayer_VideoView_release(JNIEnv *env, jobject instance) {
 
-
-    //资源释放
-    if (fFmpegDemux) {
-        delete fFmpegDemux;
-    }
-    if (fFmpegVideoDecode) {
-        delete fFmpegVideoDecode;
-    }
-    if (fFmpegAudioDecode) {
-        delete fFmpegAudioDecode;
-    }
 
 
 }
@@ -85,4 +54,49 @@ jint JNI_OnLoad(JavaVM *vm, void *res) {
 
 
     return JNI_VERSION_1_4;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1initialize(JNIEnv *env,
+                                                                     jobject instance) {
+
+    // TODO
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1startPlay(JNIEnv *env, jobject instance) {
+
+    // TODO
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1setDataSource(JNIEnv *env,
+                                                                        jobject instance,
+                                                                        jstring url_) {
+    const char *url = env->GetStringUTFChars(url_, 0);
+
+    // TODO
+
+    env->ReleaseStringUTFChars(url_, url);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1stopPlay(JNIEnv *env, jobject instance) {
+
+    // TODO
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1release(JNIEnv *env, jobject instance) {
+
+
+
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1setWindowSurface(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jobject surface) {
+
+
+
+
 }

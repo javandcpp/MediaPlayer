@@ -9,7 +9,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#include <libavformat/avformat.h>
+#include "../ffmpeg/libavformat/avformat.h"
 }
 #endif
 

@@ -26,6 +26,8 @@ public:
     void Drop();
     int pts=0;
 
+    bool end;
+
     int size = 0;
 };
 

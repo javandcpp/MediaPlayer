@@ -23,6 +23,7 @@ public:
 protected:
     bool isExit=false;
     bool isRunning =false;
+    bool isEnd=false;
 private:
     void ThreadMainTask();
 };

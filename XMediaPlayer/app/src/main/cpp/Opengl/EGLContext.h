@@ -17,7 +17,6 @@ public:
     bool eglInit(void* win);
 
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
-    EGLConfig  *eglConfig=NULL;
     EGLSurface  eglSurface=EGL_NO_SURFACE;
     EGLContext eglContext=EGL_NO_CONTEXT;
     void drawGraphic();

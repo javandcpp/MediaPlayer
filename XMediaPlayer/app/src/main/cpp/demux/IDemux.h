@@ -6,8 +6,8 @@
 #define XMEDIAPLAYER_IDEMUX_H
 
 
-#include "IObserver.h"
-#include "AVParameters.h"
+#include "../IObserver.h"
+#include "../AVParameters.h"
 
 class IDemux : public IObserver {
 

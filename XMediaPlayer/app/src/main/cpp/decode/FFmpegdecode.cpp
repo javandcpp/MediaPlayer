@@ -3,7 +3,7 @@
 //
 
 #include "FFmpegdecode.h"
-#include "MLOG.h"
+#include "../log/MLOG.h"
 
 
 FFmpegdecode::FFmpegdecode() {
@@ -53,12 +53,52 @@ bool FFmpegdecode::openCodec(AVParameters parameters) {
 bool FFmpegdecode::sendPacket(AVData pkt) {
     int re = avcodec_send_packet(codecContext, (const AVPacket *) pkt.data);
     if (re != 0) {
-        LOGE("ffmpeg sendPacket failed :%s",av_err2str(re));
+//        LOGE("ffmpeg sendPacket failed :%s",av_err2str(re));
         return false;
     }
-    LOGD("ffmpeg sendPacket success size:%d pts:%d", pkt.size,pkt.pts);
+//    LOGE("ffmpeg sendPacket success size:%d pts:%d", pkt.size,pkt.pts);
     return true;
 }
+
+AVData FFmpegdecode::receiveCacheFrame() {
+    while(true){
+        int re = avcodec_send_packet(codecContext, NULL);
+        while(true) {
+            if (!avFrame) {
+                avFrame = av_frame_alloc();
+            }
+            int ret = avcodec_receive_frame(codecContext, avFrame);
+            if (ret == AVERROR_EOF) {
+//                LOGE("------->avcodec receive cached end");
+                isRunning = true;
+                return AVData();
+            }
+            AVData avData;
+            avData.data = (unsigned char *) avFrame;
+//            LOGE("------->avcodec receive cached frame success  pts:%lld",
+//                 ((AVFrame *) avData.data)->pts);
+            if (codecContext->codec_type == AVMEDIA_TYPE_AUDIO) {
+                //样本字节数 * 单通道样本数 * 通道数
+                avData.size =
+                        av_get_bytes_per_sample((AVSampleFormat) avFrame->format) *
+                        avFrame->nb_samples * 2;
+
+            } else if (codecContext->codec_type == AVMEDIA_TYPE_VIDEO) {
+                avData.size = (avFrame->linesize[0] + avFrame->linesize[1] + avFrame->linesize[2]) *
+                              avFrame->height;
+                avData.width = avFrame->width;
+                avData.height = avFrame->height;
+            }
+
+            avData.format = avFrame->format;
+            memcpy(avData.datas, avFrame->data, sizeof(avData.datas));
+            avData.pts = avFrame->pts;
+            return avData;
+        }
+    }
+
+}
+
 
 AVData FFmpegdecode::receiveFrame() {
 //    0:                 success, a frame was returned
@@ -76,12 +116,11 @@ AVData FFmpegdecode::receiveFrame() {
     }
     int ret = avcodec_receive_frame(codecContext, avFrame);
     if (ret != 0) {
-        LOGE("avcodec receive frame fail  %s",av_err2str(ret));
         return AVData();
     }
     AVData avData;
     avData.data = (unsigned char *) avFrame;
-    LOGE("------->avcodec receive frame success  format:%d",avData.format);
+    LOGE("------->avcodec receive frame success  pts:%lld",((AVFrame *)avData.data)->pts);
     if (codecContext->codec_type == AVMEDIA_TYPE_AUDIO) {
         //样本字节数 * 单通道样本数 * 通道数
         avData.size =

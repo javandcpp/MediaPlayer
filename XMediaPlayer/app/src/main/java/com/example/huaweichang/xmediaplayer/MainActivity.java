@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void openVideo(View view){
-        openVideo("/sdcard/vtest.mp4");
+        openVideo("/sdcard/test.mp4");
     }
 
     public native void openVideo(String s);

@@ -3,7 +3,7 @@
 //
 
 #include "NativeThread.h"
-#include "MLOG.h"
+#include "log/MLOG.h"
 #include <thread>
 
 using namespace std;

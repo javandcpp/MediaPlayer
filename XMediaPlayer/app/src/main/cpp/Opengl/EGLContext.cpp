@@ -2,8 +2,8 @@
 // Created by developer on 8/26/18.
 //
 
-#include "MyEGL.h"
-#include "MLOG.h"
+#include "EGLContext.h"
+#include "../log/MLOG.h"
 
 /**
  * EGL是由Khronos Group提供的一组平台无关的API
@@ -15,8 +15,8 @@
  */
 
 void MyEGL::drawGraphic() {
-    if(eglDisplay!=EGL_NO_DISPLAY&&eglSurface!=EGL_NO_SURFACE){
-        eglSwapBuffers(eglDisplay,eglSurface);
+    if (eglDisplay != EGL_NO_DISPLAY && eglSurface != EGL_NO_SURFACE) {
+        eglSwapBuffers(eglDisplay, eglSurface);
     }
 }
 
@@ -26,7 +26,6 @@ MyEGL *MyEGL::Get() {
 }
 
 bool MyEGL::eglInit(void *win) {
-    ANativeWindow *nativeWindow = (ANativeWindow *) win;
     //获取渲染目标对象(封装物理屏幕的数据类型)
     if ((eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
         LOGE("eglDisplay failed!");
@@ -60,8 +59,7 @@ bool MyEGL::eglInit(void *win) {
             EGL_GREEN_SIZE, 8,
             EGL_RED_SIZE, 8,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL_SURFACE_TYPE,
-            EGL_WINDOW_BIT,//Surface类型，可选值为：EGL_WINDOW_BIT, EGL_PIXMAP_BIT ,EGL_PBUFFER_BIT
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,//Surface类型，可选值为：EGL_WINDOW_BIT, EGL_PIXMAP_BIT ,EGL_PBUFFER_BIT
             EGL_NONE //总是以EGL_NONE结尾
     };
 
@@ -72,16 +70,16 @@ bool MyEGL::eglInit(void *win) {
 //            EGL_SURFACE_TYPE,EGL_WINDOW_BIT,
 //            EGL_NONE
 //    };
-
+    EGLConfig eglConfig = 0;
     EGLint numberConfigs = 0;
     //获取配置信息
-    if (!eglChooseConfig(eglDisplay, attribs, eglConfig, 1, &numberConfigs)) {
+    if (!eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numberConfigs)) {
 
         LOGE("eglChooseConfig failed!");
         return false;
     }
     LOGD("eglChooseConfig sucessful!");
-    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, nativeWindow, NULL);
+    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, (ANativeWindow *) win, NULL);
 
 
     //4 创建并打开EGL上下文

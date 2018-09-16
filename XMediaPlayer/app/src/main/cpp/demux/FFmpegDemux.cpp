@@ -4,7 +4,7 @@
 
 
 #include "FFmpegDemux.h"
-#include "MLOG.h"
+#include "../log/MLOG.h"
 
 
 bool FFmpegDemux::isFirst = false;
@@ -105,14 +105,13 @@ AVData FFmpegDemux::readMediaData() {
     pkt->pts = pkt->pts * (1000 * r2d(avFormatContext->streams[pkt->stream_index]->time_base));
     pkt->dts = pkt->dts * (1000 * r2d(avFormatContext->streams[pkt->stream_index]->time_base));
     avData.pts = (int) pkt->pts;
-    LOGD("read media data size:%d", avData.size);
+//    LOGD("read media data size:%d", avData.size);
     return avData;
 }
 
 
 void FFmpegDemux::initAVCodec() {
     av_register_all();
-//    avcodec_register_all();
     avformat_network_init();
 }
 
