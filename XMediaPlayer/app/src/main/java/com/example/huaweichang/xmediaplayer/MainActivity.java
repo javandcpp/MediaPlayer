@@ -1,5 +1,6 @@
 package com.example.huaweichang.xmediaplayer;
 
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,21 +8,25 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    private KSMediaPlayer ksMediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
+
+
 
 
     public void openVideo(View view){
-        openVideo("/sdcard/test.mp4");
+        MyGLSurfaceView glSurfaceView = findViewById(R.id.videoView);
+        ksMediaPlayer = new KSMediaPlayer();
+        ksMediaPlayer.setSurfaceView(glSurfaceView);
+
+        ksMediaPlayer.setDataSource("/sdcard/test.mp4");
+        ksMediaPlayer.startPrepareAsync();
     }
-
-    public native void openVideo(String s);
-
-
 
     @Override
     protected void onResume() {
@@ -37,7 +42,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("Media");
-    }
+
 }

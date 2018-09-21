@@ -13,44 +13,38 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by huaweichang on 2018/9/16.
  */
 
-public class KSMediaPlayer implements SurfaceHolder.Callback, GLSurfaceView.Renderer {
+public class KSMediaPlayer{
 
 
-    private GLSurfaceView mSurfaceView;
+    private MyGLSurfaceView mSurfaceView;
+
+    private void loadNativelibrary() {
+        System.loadLibrary("Media");
+    }
 
     public KSMediaPlayer() {
+        loadNativelibrary();
         _initialize();
     }
 
     public void setDataSource(String url) {
+        _setWindowSurface(mSurfaceView.getSurface());
         _setDataSource(url);
     }
 
-    public void setSurfaceView(GLSurfaceView surfaceView) {
-        this.mSurfaceView=surfaceView;
-        surfaceView.getHolder().addCallback(this);
+    public void setSurfaceView(MyGLSurfaceView surfaceView) {
+        this.mSurfaceView = surfaceView;
+
 
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        _setWindowSurface(surfaceHolder.getSurface());
-        mSurfaceView.setRenderer(this);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
+    public void startPrepareAsync(){
+        _startPlay();
     }
 
     public native void _initialize();
 
-    public native void _startPlay();
+    private native void _startPlay();
 
     public native void _setDataSource(String url);
 
@@ -60,18 +54,4 @@ public class KSMediaPlayer implements SurfaceHolder.Callback, GLSurfaceView.Rend
 
     public native void _setWindowSurface(Surface surface);
 
-    @Override
-    public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl10) {
-
-    }
 }

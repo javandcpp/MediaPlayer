@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.example.huaweichang.xmediaplayer.VideoView
+        <com.example.huaweichang.xmediaplayer.MyGLSurfaceView
             android:id="@+id/videoView"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -23,7 +23,7 @@
 
         <SeekBar
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:max="100"
             android:progress="10"
             app:layout_constraintBottom_toBottomOf="@id/videoView" />
