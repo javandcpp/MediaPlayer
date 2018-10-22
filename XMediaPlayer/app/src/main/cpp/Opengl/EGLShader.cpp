@@ -86,11 +86,15 @@ static const char *fragNV21 = GET_STR(
 //顶点着色 uniform(const )
 // varying变量是vertex和fragment shader之间做数据传递用的 因此varying变量在vertex和fragment shader二者之间的声明必须是一致的
 static const char *vertexShader = GET_STR(
-        attribute vec4 aPosition; //顶点坐标
-        attribute vec2 aTexCoord; //材质顶点坐标
-        varying vec2 vTexCoord;   //输出的材质坐标
-        void main(){
-            vTexCoord = vec2(aTexCoord.x,1.0-aTexCoord.y);
+        attribute
+        vec4 aPosition; //顶点坐标
+        attribute
+        vec2 aTexCoord; //材质顶点坐标
+        varying
+        vec2 vTexCoord;   //输出的材质坐标
+        void main() {
+            vTexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
+//            vTexCoord = vec2(aTexCoord.x,aTexCoord.y);
             gl_Position = aPosition;
         }
 );
@@ -236,16 +240,16 @@ bool EGLShader::Init(AVPixelFormat type) {
 
 
     //材质纹理初始化
-    //设置纹理层
+    //设置纹理层次
     glUniform1i(glGetUniformLocation(program, "yTexture"), 0); //对于纹理第1层
-    switch ((int)type) {
+    switch ((int) type) {
         case AV_PIX_FMT_YUV420P:
             glUniform1i(glGetUniformLocation(program, "uTexture"), 1); //对于纹理第2层
             glUniform1i(glGetUniformLocation(program, "vTexture"), 2); //对于纹理第3层
             break;
         case AV_PIX_FMT_NV21:
         case AV_PIX_FMT_NV12:
-            glUniform1i(glGetUniformLocation(program, "uvTexture"), 1); //对于纹理第2层
+            glUniform1i(glGetUniformLocation(program, "uvTexture"), 1); //对于纹理第2层®
             break;
     }
 
@@ -255,10 +259,11 @@ bool EGLShader::Init(AVPixelFormat type) {
 
 }
 
+
 void EGLShader::draw() {
     if (!program)
         return;
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//三角形条带绘制
 }
 
 void EGLShader::getTexture(unsigned int index, int width, int height, unsigned char *buf,

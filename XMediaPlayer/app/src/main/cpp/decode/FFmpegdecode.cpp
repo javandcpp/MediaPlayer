@@ -25,15 +25,21 @@ bool FFmpegdecode::openCodec(AVParameters parameters) {
         LOGD("openCodec failed!");
         return false;
     }
-    AVCodec *codec = avcodec_find_decoder(parameters.codecParameters->codec_id);
+    AVCodec *codec = NULL;
+    if (parameters.codecParameters->codec_type == AVMEDIA_TYPE_VIDEO) {
+//        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+        codec = avcodec_find_decoder(parameters.codecParameters->codec_id);
+    } else {
+        codec = avcodec_find_decoder(parameters.codecParameters->codec_id);
+    }
 
     if (!codec) {
         LOGD("avcodec find decoder failed!");
         return false;
     }
     codecContext = avcodec_alloc_context3(codec);
-    avcodec_parameters_to_context(codecContext,parameters.codecParameters);
-    codecContext->thread_count=8;
+    avcodec_parameters_to_context(codecContext, parameters.codecParameters);
+    codecContext->thread_count = 8;
     int ret = avcodec_open2(codecContext, NULL, NULL);
     if (ret < 0) {
         LOGE("avcodec open error :%s", av_err2str(ret));
@@ -61,9 +67,9 @@ bool FFmpegdecode::sendPacket(AVData pkt) {
 }
 
 AVData FFmpegdecode::receiveCacheFrame() {
-    while(true){
+    while (true) {
         int re = avcodec_send_packet(codecContext, NULL);
-        while(true) {
+        while (true) {
             if (!avFrame) {
                 avFrame = av_frame_alloc();
             }
@@ -120,7 +126,7 @@ AVData FFmpegdecode::receiveFrame() {
     }
     AVData avData;
     avData.data = (unsigned char *) avFrame;
-    LOGE("------->avcodec receive frame success  pts:%lld",((AVFrame *)avData.data)->pts);
+    LOGE("------->avcodec receive frame success  pts:%lld", ((AVFrame *) avData.data)->pts);
     if (codecContext->codec_type == AVMEDIA_TYPE_AUDIO) {
         //样本字节数 * 单通道样本数 * 通道数
         avData.size =
@@ -133,9 +139,9 @@ AVData FFmpegdecode::receiveFrame() {
         avData.height = avFrame->height;
     }
 
-    avData.format=avFrame->format;
-    memcpy(avData.datas,avFrame->data, sizeof(avData.datas));
-    avData.pts=avFrame->pts;
+    avData.format = avFrame->format;
+    memcpy(avData.datas, avFrame->data, sizeof(avData.datas));
+    avData.pts = avFrame->pts;
 
     return avData;
 }

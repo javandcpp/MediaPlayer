@@ -13,36 +13,19 @@
 #include "player/MediaPlayer.h"
 #include <android/native_window_jni.h>
 
+
+#ifdef __cplusplus
+extern "C" {
+#include "libavcodec/jni.h"
+};
+#endif
+
+
 ANativeWindow *window = NULL;
-MediaPlayer *mediaPlayer=NULL;
+MediaPlayer *mediaPlayer = NULL;
 
 std::mutex mut;
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_huaweichang_xmediaplayer_VideoView_initNativeEGL(JNIEnv *env, jobject instance,
-                                                                  jobject surface) {
-
-
-
-
-}
-
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_huaweichang_xmediaplayer_MainActivity_openVideo__Ljava_lang_String_2(JNIEnv *env,
-                                                                                      jobject instance,
-                                                                                      jstring s_) {
-    const char *s = env->GetStringUTFChars(s_, 0);
-
-
-
-
-
-
-    env->ReleaseStringUTFChars(s_, s);
-}
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -53,10 +36,9 @@ Java_com_example_huaweichang_xmediaplayer_VideoView_release(JNIEnv *env, jobject
 
 extern "C"
 JNIEXPORT
-jint JNI_OnLoad(JavaVM *vm, void *res) {
-
-
-    return JNI_VERSION_1_4;
+jint JNI_OnLoad(JavaVM *vm, void *res) {//system.loadlibrary
+    av_jni_set_java_vm(vm, NULL);
+    return JNI_VERSION_1_6;
 }
 extern "C"
 JNIEXPORT void JNICALL
@@ -84,7 +66,7 @@ Java_com_example_huaweichang_xmediaplayer_KSMediaPlayer__1setDataSource(JNIEnv *
                                                                         jstring url_) {
     lock_guard<std::mutex> lk(mut);
     const char *url = env->GetStringUTFChars(url_, 0);
-     mediaPlayer->setDataSource(url);
+    mediaPlayer->setDataSource(url);
     env->ReleaseStringUTFChars(url_, url);
 }
 

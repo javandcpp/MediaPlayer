@@ -46,7 +46,6 @@ bool FFmpegDemux::open(const char *url) {
         goto fail;
     }
     LOGD("avformat open input successful!");
-
     if ((ret = avformat_find_stream_info(avFormatContext, 0)) < 0) {
         LOGE("avformat find stream info failed:  %s", av_err2str(ret));
         goto fail;
@@ -81,6 +80,10 @@ AVParameters *FFmpegDemux::getVideoParamters() {
     return videoAvParameters;
 }
 
+/**
+ * 解码
+ * @return
+ */
 AVData FFmpegDemux::readMediaData() {
     if (!avFormatContext)return AVData();
 
